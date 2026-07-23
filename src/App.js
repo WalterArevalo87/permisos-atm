@@ -78,29 +78,27 @@ export default function App() {
     !search || [p.atm, p.empresa, p.persona, p.acceso].some(v => v.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // ── Filtro dashboard ──────────────────────────────────────────
   const aplicarFiltro = (tipo, valor, label) => {
-    if (filtroActivo?.tipo === tipo && filtroActivo?.valor === valor) setFiltro(null);
+    if (filtroActivo?.tipo===tipo && filtroActivo?.valor===valor) setFiltro(null);
     else setFiltro({ tipo, valor, label });
   };
 
   const permisosFiltrados = filtroActivo
     ? permisos.filter(p => {
-        if (filtroActivo.tipo === "estado")  return filtroActivo.valor === "enviado" ? p.enviado : !p.enviado;
-        if (filtroActivo.tipo === "acceso")  return p.acceso  === filtroActivo.valor;
-        if (filtroActivo.tipo === "empresa") return p.empresa === filtroActivo.valor;
-        if (filtroActivo.tipo === "atm")     return p.atm     === filtroActivo.valor;
-        if (filtroActivo.tipo === "dia")     return p.createdAt?.startsWith(filtroActivo.valor);
+        if (filtroActivo.tipo==="estado")  return filtroActivo.valor==="enviado" ? p.enviado : !p.enviado;
+        if (filtroActivo.tipo==="acceso")  return p.acceso  === filtroActivo.valor;
+        if (filtroActivo.tipo==="empresa") return p.empresa === filtroActivo.valor;
+        if (filtroActivo.tipo==="atm")     return p.atm     === filtroActivo.valor;
+        if (filtroActivo.tipo==="dia")     return p.createdAt?.startsWith(filtroActivo.valor);
         return true;
       })
     : permisos;
 
-  // ── Stats ─────────────────────────────────────────────────────
   const totalPermisos  = permisos.length;
   const totalEnviados  = permisos.filter(p => p.enviado).length;
   const totalGuardados = permisos.filter(p => !p.enviado).length;
 
-  const porAcceso  = ACCESOS.map(a => ({ nombre:a, total: permisos.filter(p => p.acceso===a).length })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
+  const porAcceso  = ACCESOS.map(a => ({ nombre:a, total: permisos.filter(p=>p.acceso===a).length })).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);
   const porEmpresa = [...new Set(permisos.map(p=>p.empresa))].map(e=>({ nombre:e, total: permisos.filter(p=>p.empresa===e).length })).sort((a,b)=>b.total-a.total).slice(0,6);
   const porATM     = [...new Set(permisos.map(p=>p.atm))].map(a=>({ nombre:a, total: permisos.filter(p=>p.atm===a).length })).sort((a,b)=>b.total-a.total).slice(0,6);
 
@@ -110,20 +108,18 @@ export default function App() {
     return { dia: d.toLocaleDateString("es-EC",{weekday:"short",day:"2-digit"}), key, total: permisos.filter(p=>p.createdAt?.startsWith(key)).length };
   });
 
-  const maxDia     = Math.max(...ultimos7dias.map(d=>d.total),1);
-  const maxAcceso  = Math.max(...porAcceso.map(a=>a.total),1);
-  const maxEmpresa = Math.max(...porEmpresa.map(e=>e.total),1);
-  const maxATM     = Math.max(...porATM.map(a=>a.total),1);
+  const maxDia=Math.max(...ultimos7dias.map(d=>d.total),1);
+  const maxAcceso=Math.max(...porAcceso.map(a=>a.total),1);
+  const maxEmpresa=Math.max(...porEmpresa.map(e=>e.total),1);
+  const maxATM=Math.max(...porATM.map(a=>a.total),1);
+  const isActive=(tipo,valor)=>filtroActivo?.tipo===tipo&&filtroActivo?.valor===valor;
 
-  const isActive = (tipo, valor) => filtroActivo?.tipo===tipo && filtroActivo?.valor===valor;
-
-  // ── Estilos ───────────────────────────────────────────────────
   const s = {
-    wrap:     { maxWidth:900, margin:"0 auto", padding:"1.5rem 1rem", fontFamily:"system-ui,sans-serif" },
+    wrap:     { maxWidth:960, margin:"0 auto", padding:"1rem", fontFamily:"system-ui,sans-serif" },
     toast:    { position:"fixed", bottom:20, left:"50%", transform:"translateX(-50%)", background:"#fff", border:"1px solid #ccc", padding:"10px 20px", borderRadius:8, fontSize:14, zIndex:999, boxShadow:"0 4px 12px rgba(0,0,0,0.1)", whiteSpace:"nowrap" },
-    tabs:     { display:"flex", gap:4, background:"#f4f4f4", borderRadius:8, padding:4, marginBottom:"1.25rem" },
-    tab:      (a) => ({ flex:1, padding:"8px 12px", border:"none", borderRadius:6, cursor:"pointer", background:a?"#fff":"transparent", fontWeight:a?500:400, fontSize:14, color:a?"#111":"#666", boxShadow:a?"0 1px 3px rgba(0,0,0,0.1)":"none" }),
-    emailBox: { background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:"10px 14px", marginBottom:14, display:"flex", gap:10, alignItems:"center" },
+    tabs:     { display:"flex", gap:4, background:"#f4f4f4", borderRadius:8, padding:4, marginBottom:"1rem" },
+    tab:      (a) => ({ flex:1, padding:"7px 12px", border:"none", borderRadius:6, cursor:"pointer", background:a?"#fff":"transparent", fontWeight:a?500:400, fontSize:13, color:a?"#111":"#666", boxShadow:a?"0 1px 3px rgba(0,0,0,0.1)":"none" }),
+    emailBox: { background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:"10px 14px", marginBottom:12, display:"flex", gap:10, alignItems:"center" },
     card:     { background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1.25rem" },
     grid2:    { display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 },
     label:    { fontSize:11, fontWeight:500, color:"#6b7280", textTransform:"uppercase", letterSpacing:"0.3px", display:"block", marginBottom:5 },
@@ -138,20 +134,19 @@ export default function App() {
     iconBtn:  { background:"none", border:"none", cursor:"pointer", fontSize:16, color:"#9ca3af", padding:"2px 4px" },
   };
 
-  // ── Gráficas ──────────────────────────────────────────────────
-  const BarChart = ({ data, max, color, height=110, tipo }) => (
-    <div style={{ display:"flex", alignItems:"flex-end", gap:4, height, paddingTop:8 }}>
+  const BarChart = ({ data, max, color, height=90, tipo }) => (
+    <div style={{ display:"flex", alignItems:"flex-end", gap:3, height, paddingTop:6 }}>
       {data.map((d,i) => {
-        const activo = isActive(tipo, d.key||d.nombre);
+        const activo=isActive(tipo, d.key||d.nombre);
         return (
           <div key={i} onClick={() => d.total>0 && aplicarFiltro(tipo, d.key||d.nombre, d.nombre||d.dia)}
-            style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3, cursor:d.total>0?"pointer":"default" }}>
-            <span style={{ fontSize:9, color:"#6b7280", fontWeight:500 }}>{d.total>0?d.total:""}</span>
+            style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:2, cursor:d.total>0?"pointer":"default" }}>
+            <span style={{ fontSize:9, color:"#6b7280" }}>{d.total>0?d.total:""}</span>
             <div style={{ width:"100%", background:activo?"#1d4ed8":color, borderRadius:"3px 3px 0 0",
-              height: Math.max((d.total/max)*(height-28), d.total>0?3:0),
-              transition:"all 0.2s", outline:activo?"2px solid #1d4ed8":"none", outlineOffset:2 }} />
-            <span style={{ fontSize:9, color:activo?"#1d4ed8":"#9ca3af", fontWeight:activo?600:400,
-              textAlign:"center", lineHeight:1.2, maxWidth:50, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
+              height:Math.max((d.total/max)*(height-24),d.total>0?3:0), transition:"all 0.2s",
+              outline:activo?"2px solid #1d4ed8":"none", outlineOffset:1 }} />
+            <span style={{ fontSize:8, color:activo?"#1d4ed8":"#9ca3af", fontWeight:activo?600:400,
+              textAlign:"center", maxWidth:48, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>
               {d.nombre||d.dia}
             </span>
           </div>
@@ -161,22 +156,22 @@ export default function App() {
   );
 
   const HorizBar = ({ data, max, colors, tipo }) => (
-    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+    <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
       {data.map((d,i) => {
-        const activo = isActive(tipo, d.nombre);
+        const activo=isActive(tipo, d.nombre);
         return (
           <div key={i} onClick={() => aplicarFiltro(tipo, d.nombre, d.nombre)}
-            style={{ cursor:"pointer", padding:"3px 5px", borderRadius:5,
+            style={{ cursor:"pointer", padding:"2px 4px", borderRadius:5,
               background:activo?"#eff6ff":"transparent",
               border:activo?"1px solid #bfdbfe":"1px solid transparent", transition:"all 0.15s" }}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:2 }}>
-              <span style={{ fontSize:11, color:activo?"#1d4ed8":"#374151", fontWeight:activo?600:400,
-                maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{d.nombre}</span>
-              <span style={{ fontSize:11, fontWeight:500, color:"#111" }}>{d.total}</span>
+              <span style={{ fontSize:10, color:activo?"#1d4ed8":"#374151", fontWeight:activo?600:400,
+                maxWidth:130, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{d.nombre}</span>
+              <span style={{ fontSize:10, fontWeight:500 }}>{d.total}</span>
             </div>
-            <div style={{ background:"#f3f4f6", borderRadius:3, height:6 }}>
+            <div style={{ background:"#f3f4f6", borderRadius:3, height:5 }}>
               <div style={{ background:activo?"#1d4ed8":(colors?colors[i%colors.length]:"#2563eb"),
-                borderRadius:3, height:6, width:`${(d.total/max)*100}%`, transition:"all 0.3s" }} />
+                borderRadius:3, height:5, width:`${(d.total/max)*100}%`, transition:"all 0.3s" }} />
             </div>
           </div>
         );
@@ -185,26 +180,26 @@ export default function App() {
   );
 
   const ListaFiltrada = ({ lista }) => (
-    <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+    <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
       {lista.map(p => (
-        <div key={p.id} style={{ padding:"9px 12px", background:"#f9fafb", borderRadius:8,
+        <div key={p.id} style={{ padding:"8px 12px", background:"#f9fafb", borderRadius:8,
           border:"1px solid #f3f4f6", borderLeft:"3px solid #2563eb" }}>
-          <div style={{ display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:5 }}>
+          <div style={{ display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:4 }}>
             <div>
-              <span style={{ fontSize:13, fontWeight:500 }}>🖥 {p.atm}</span>
-              <span style={{ fontSize:12, color:"#6b7280", marginLeft:8 }}>🏢 {p.empresa}</span>
-              <span style={{ fontSize:12, color:"#6b7280", marginLeft:8 }}>👤 {p.persona}</span>
+              <span style={{ fontSize:12, fontWeight:500 }}>🖥 {p.atm}</span>
+              <span style={{ fontSize:11, color:"#6b7280", marginLeft:8 }}>🏢 {p.empresa}</span>
+              <span style={{ fontSize:11, color:"#6b7280", marginLeft:8 }}>👤 {p.persona}</span>
             </div>
             <div style={{ display:"flex", gap:5, alignItems:"center", flexWrap:"wrap" }}>
-              <span style={{ fontSize:10, padding:"2px 7px", borderRadius:20, background:"#eff6ff", color:"#1d4ed8" }}>🔑 {p.acceso}</span>
-              <span style={{ fontSize:11, color:"#9ca3af" }}>📅 {p.fecha}</span>
-              <span style={{ fontSize:11, color:"#9ca3af" }}>🕐 {p.hora}</span>
+              <span style={{ fontSize:10, padding:"2px 6px", borderRadius:20, background:"#eff6ff", color:"#1d4ed8" }}>🔑 {p.acceso}</span>
+              <span style={{ fontSize:10, color:"#9ca3af" }}>📅 {p.fecha}</span>
+              <span style={{ fontSize:10, color:"#9ca3af" }}>🕐 {p.hora}</span>
               {p.enviado
-                ? <span style={{ fontSize:10, padding:"2px 7px", borderRadius:20, background:"#f0fdf4", color:"#15803d" }}>✓ enviado</span>
-                : <span style={{ fontSize:10, padding:"2px 7px", borderRadius:20, background:"#f9fafb", color:"#9ca3af", border:"1px solid #e5e7eb" }}>guardado</span>}
+                ? <span style={{ fontSize:10, padding:"2px 6px", borderRadius:20, background:"#f0fdf4", color:"#15803d" }}>✓ enviado</span>
+                : <span style={{ fontSize:10, padding:"2px 6px", borderRadius:20, background:"#f9fafb", color:"#9ca3af", border:"1px solid #e5e7eb" }}>guardado</span>}
             </div>
           </div>
-          {p.motivo && <div style={{ fontSize:11, color:"#9ca3af", marginTop:4, fontStyle:"italic" }}>"{p.motivo}"</div>}
+          {p.motivo && <div style={{ fontSize:10, color:"#9ca3af", marginTop:3, fontStyle:"italic" }}>"{p.motivo}"</div>}
         </div>
       ))}
     </div>
@@ -214,12 +209,15 @@ export default function App() {
     <div style={s.wrap}>
       {toast && <div style={s.toast}>{toast}</div>}
 
-      <div style={{ marginBottom:"1.25rem", paddingBottom:"1rem", borderBottom:"1px solid #e5e7eb", display:"flex", alignItems:"center", gap:12 }}>
-        <div style={{ fontSize:28 }}>🏧</div>
-        <div>
-          <h1 style={{ fontSize:20, fontWeight:500, margin:0 }}>Permisos de acceso ATM</h1>
-          <p style={{ fontSize:12, color:"#9ca3af", marginTop:2 }}>Registro y control de ingresos a cajeros automáticos</p>
+      <div style={{ marginBottom:"1rem", paddingBottom:"0.75rem", borderBottom:"1px solid #e5e7eb", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <div style={{ fontSize:24 }}>🏧</div>
+          <div>
+            <h1 style={{ fontSize:18, fontWeight:500, margin:0 }}>Permisos de acceso ATM</h1>
+            <p style={{ fontSize:11, color:"#9ca3af", marginTop:1 }}>Registro y control de ingresos a cajeros automáticos</p>
+          </div>
         </div>
+        <span style={{ fontSize:10, color:"#9ca3af", background:"#f3f4f6", padding:"2px 8px", borderRadius:20 }}>v1.0.0</span>
       </div>
 
       <div style={s.tabs}>
@@ -230,29 +228,29 @@ export default function App() {
         </button>
       </div>
 
-      {/* ══════════════════ DASHBOARD ══════════════════ */}
+      {/* ══════════════ DASHBOARD ══════════════ */}
       {tab === "dashboard" && (
         <>
-          {/* Tarjetas compactas horizontales */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:12 }}>
+          {/* Tarjetas */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8, marginBottom:8 }}>
             {[
               { label:"Total permisos",   valor:totalPermisos,  icon:"📋", color:"#eff6ff", border:"#bfdbfe", text:"#1d4ed8", tipo:"total",  val:"total"    },
               { label:"Correos enviados", valor:totalEnviados,  icon:"✉",  color:"#f0fdf4", border:"#bbf7d0", text:"#15803d", tipo:"estado", val:"enviado"  },
               { label:"Solo guardados",   valor:totalGuardados, icon:"💾", color:"#fefce8", border:"#fde68a", text:"#92400e", tipo:"estado", val:"guardado" },
             ].map((c,i) => {
-              const activo = filtroActivo?.tipo===c.tipo && filtroActivo?.valor===c.val;
+              const activo=filtroActivo?.tipo===c.tipo&&filtroActivo?.valor===c.val;
               return (
                 <div key={i} onClick={() => c.tipo!=="total" && aplicarFiltro(c.tipo, c.val, c.label)}
                   style={{ background:c.color, border:`2px solid ${activo?c.text:c.border}`, borderRadius:10,
-                    padding:"10px 14px", cursor:c.tipo!=="total"?"pointer":"default",
-                    display:"flex", alignItems:"center", gap:12,
+                    padding:"8px 14px", cursor:c.tipo!=="total"?"pointer":"default",
+                    display:"flex", alignItems:"center", gap:10,
                     transform:activo?"scale(1.02)":"scale(1)", transition:"all 0.15s",
                     boxShadow:activo?`0 4px 14px ${c.border}`:"none" }}>
-                  <div style={{ fontSize:26, lineHeight:1 }}>{c.icon}</div>
+                  <div style={{ fontSize:22 }}>{c.icon}</div>
                   <div>
-                    <div style={{ fontSize:26, fontWeight:700, color:c.text, lineHeight:1 }}>{c.valor}</div>
-                    <div style={{ fontSize:11, color:c.text, opacity:0.8, marginTop:2 }}>{c.label}</div>
-                    {activo && <div style={{ fontSize:10, color:c.text, fontWeight:600, marginTop:2 }}>● Filtro activo</div>}
+                    <div style={{ fontSize:24, fontWeight:700, color:c.text, lineHeight:1 }}>{c.valor}</div>
+                    <div style={{ fontSize:10, color:c.text, opacity:0.8, marginTop:1 }}>{c.label}</div>
+                    {activo && <div style={{ fontSize:9, color:c.text, fontWeight:600 }}>● Filtro activo</div>}
                   </div>
                 </div>
               );
@@ -260,23 +258,20 @@ export default function App() {
           </div>
 
           {totalPermisos === 0 ? (
-            <div style={{ textAlign:"center", padding:"3rem", color:"#9ca3af" }}>
-              <div style={{ fontSize:48, marginBottom:12 }}>📊</div>
-              <p style={{ fontSize:15 }}>Aún no hay datos para mostrar.</p>
+            <div style={{ textAlign:"center", padding:"2rem", color:"#9ca3af" }}>
+              <div style={{ fontSize:40, marginBottom:10 }}>📊</div>
+              <p>Aún no hay datos.</p>
               <button onClick={() => setTab("form")}
-                style={{ marginTop:16, padding:"10px 20px", background:"#2563eb", color:"#fff", border:"none", borderRadius:8, fontSize:14, cursor:"pointer" }}>
+                style={{ marginTop:12, padding:"8px 16px", background:"#2563eb", color:"#fff", border:"none", borderRadius:8, fontSize:13, cursor:"pointer" }}>
                 + Nueva solicitud
               </button>
             </div>
           ) : (
             <>
-              {/* Banner filtro */}
               {filtroActivo && (
-                <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:"7px 14px",
-                  marginBottom:10, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <span style={{ fontSize:13, color:"#1d4ed8" }}>
-                    🔍 <strong>{filtroActivo.label}</strong> — {permisosFiltrados.length} resultado(s)
-                  </span>
+                <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:8, padding:"6px 12px",
+                  marginBottom:8, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <span style={{ fontSize:12, color:"#1d4ed8" }}>🔍 <strong>{filtroActivo.label}</strong> — {permisosFiltrados.length} resultado(s)</span>
                   <button onClick={() => setFiltro(null)}
                     style={{ background:"none", border:"none", cursor:"pointer", fontSize:12, color:"#1d4ed8", fontWeight:500 }}>
                     ✕ Quitar filtro
@@ -285,95 +280,86 @@ export default function App() {
               )}
 
               {filtroActivo ? (
-                /* Vista filtrada */
-                <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem" }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-                    <span style={{ fontSize:13, fontWeight:500, color:"#374151" }}>📋 {filtroActivo.label}</span>
-                    <span style={{ fontSize:12, color:"#9ca3af" }}>{permisosFiltrados.length} registro(s)</span>
+                <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem", maxHeight:420, overflowY:"auto" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
+                    <span style={{ fontSize:12, fontWeight:500 }}>📋 {filtroActivo.label}</span>
+                    <span style={{ fontSize:11, color:"#9ca3af" }}>{permisosFiltrados.length} registro(s)</span>
                   </div>
-                  {permisosFiltrados.length === 0
-                    ? <p style={{ fontSize:13, color:"#9ca3af", textAlign:"center", padding:"2rem" }}>Sin resultados.</p>
-                    : <ListaFiltrada lista={permisosFiltrados} />
-                  }
+                  {permisosFiltrados.length===0
+                    ? <p style={{ fontSize:13, color:"#9ca3af", textAlign:"center" }}>Sin resultados.</p>
+                    : <ListaFiltrada lista={permisosFiltrados} />}
                 </div>
               ) : (
-                /* Grid de gráficas compacto */
                 <>
-                  {/* Fila 1: 7 días + Por acceso */}
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10 }}>
-                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem" }}>
-                      <div style={{ fontSize:12, fontWeight:500, color:"#374151", marginBottom:2 }}>📅 Actividad últimos 7 días</div>
-                      <div style={{ fontSize:10, color:"#9ca3af", marginBottom:6 }}>Clic en barra para filtrar</div>
-                      <BarChart data={ultimos7dias} max={maxDia} color="#93c5fd" height={110} tipo="dia" />
+                  {/* 4 gráficas en una fila */}
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:8, marginBottom:8 }}>
+                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:10, padding:"10px" }}>
+                      <div style={{ fontSize:11, fontWeight:500, color:"#374151", marginBottom:1 }}>📅 Últimos 7 días</div>
+                      <div style={{ fontSize:9, color:"#9ca3af", marginBottom:4 }}>Clic para filtrar</div>
+                      <BarChart data={ultimos7dias} max={maxDia} color="#93c5fd" height={90} tipo="dia" />
                     </div>
-                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem" }}>
-                      <div style={{ fontSize:12, fontWeight:500, color:"#374151", marginBottom:2 }}>🔑 Por tipo de acceso</div>
-                      <div style={{ fontSize:10, color:"#9ca3af", marginBottom:6 }}>Clic para filtrar</div>
-                      {porAcceso.length===0 ? <p style={{ fontSize:12, color:"#9ca3af" }}>Sin datos</p>
+                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:10, padding:"10px", overflowY:"auto", maxHeight:160 }}>
+                      <div style={{ fontSize:11, fontWeight:500, color:"#374151", marginBottom:1 }}>🔑 Por acceso</div>
+                      <div style={{ fontSize:9, color:"#9ca3af", marginBottom:4 }}>Clic para filtrar</div>
+                      {porAcceso.length===0 ? <p style={{ fontSize:11, color:"#9ca3af" }}>Sin datos</p>
                         : <HorizBar data={porAcceso} max={maxAcceso} colors={COLORS} tipo="acceso" />}
                     </div>
-                  </div>
-
-                  {/* Fila 2: Por empresa + Por ATM */}
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10 }}>
-                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem" }}>
-                      <div style={{ fontSize:12, fontWeight:500, color:"#374151", marginBottom:2 }}>🏢 Por empresa</div>
-                      <div style={{ fontSize:10, color:"#9ca3af", marginBottom:6 }}>Clic para filtrar</div>
-                      {porEmpresa.length===0 ? <p style={{ fontSize:12, color:"#9ca3af" }}>Sin datos</p>
+                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:10, padding:"10px", overflowY:"auto", maxHeight:160 }}>
+                      <div style={{ fontSize:11, fontWeight:500, color:"#374151", marginBottom:1 }}>🏢 Por empresa</div>
+                      <div style={{ fontSize:9, color:"#9ca3af", marginBottom:4 }}>Clic para filtrar</div>
+                      {porEmpresa.length===0 ? <p style={{ fontSize:11, color:"#9ca3af" }}>Sin datos</p>
                         : <HorizBar data={porEmpresa} max={maxEmpresa} colors={["#16a34a","#15803d","#166534","#14532d","#052e16","#bbf7d0"]} tipo="empresa" />}
                     </div>
-                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem" }}>
-                      <div style={{ fontSize:12, fontWeight:500, color:"#374151", marginBottom:2 }}>🖥 Por ATM</div>
-                      <div style={{ fontSize:10, color:"#9ca3af", marginBottom:6 }}>Clic en barra para filtrar</div>
-                      {porATM.length===0 ? <p style={{ fontSize:12, color:"#9ca3af" }}>Sin datos</p>
-                        : <BarChart data={porATM} max={maxATM} color="#c4b5fd" height={110} tipo="atm" />}
+                    <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:10, padding:"10px" }}>
+                      <div style={{ fontSize:11, fontWeight:500, color:"#374151", marginBottom:1 }}>🖥 Por ATM</div>
+                      <div style={{ fontSize:9, color:"#9ca3af", marginBottom:4 }}>Clic para filtrar</div>
+                      {porATM.length===0 ? <p style={{ fontSize:11, color:"#9ca3af" }}>Sin datos</p>
+                        : <BarChart data={porATM} max={maxATM} color="#c4b5fd" height={90} tipo="atm" />}
                     </div>
                   </div>
 
-                  {/* Fila 3: Tabla compacta últimos registros */}
-                  <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:12, padding:"1rem" }}>
-                    <div style={{ fontSize:12, fontWeight:500, color:"#374151", marginBottom:10 }}>🕐 Últimos registros</div>
-                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12 }}>
+                  {/* Tabla compacta */}
+                  <div style={{ background:"#fff", border:"1px solid #e5e7eb", borderRadius:10, padding:"10px" }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                      <span style={{ fontSize:11, fontWeight:500, color:"#374151" }}>🕐 Últimos registros</span>
+                      {permisos.length>6 && (
+                        <button onClick={() => setTab("history")}
+                          style={{ fontSize:11, color:"#2563eb", background:"none", border:"none", cursor:"pointer", textDecoration:"underline" }}>
+                          Ver todos ({permisos.length}) →
+                        </button>
+                      )}
+                    </div>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
                       <thead>
                         <tr style={{ background:"#f9fafb" }}>
                           {["ATM","Empresa","Acceso","Persona","Fecha","Hora","Estado"].map(h => (
-                            <th key={h} style={{ padding:"7px 10px", textAlign:"left", color:"#6b7280", fontWeight:500,
-                              fontSize:11, textTransform:"uppercase", letterSpacing:"0.3px", borderBottom:"1px solid #e5e7eb" }}>
+                            <th key={h} style={{ padding:"5px 8px", textAlign:"left", color:"#6b7280", fontWeight:500,
+                              fontSize:10, textTransform:"uppercase", borderBottom:"1px solid #e5e7eb" }}>
                               {h}
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {permisos.slice(0,8).map((p,i) => (
+                        {permisos.slice(0,6).map((p,i) => (
                           <tr key={p.id} style={{ borderBottom:"1px solid #f3f4f6", background:i%2===0?"#fff":"#fafafa" }}>
-                            <td style={{ padding:"7px 10px", fontWeight:500, color:"#111" }}>🖥 {p.atm}</td>
-                            <td style={{ padding:"7px 10px", color:"#374151" }}>{p.empresa}</td>
-                            <td style={{ padding:"7px 10px" }}>
-                              <span style={{ fontSize:10, padding:"2px 7px", borderRadius:20, background:"#eff6ff", color:"#1d4ed8", whiteSpace:"nowrap" }}>
-                                {p.acceso}
-                              </span>
+                            <td style={{ padding:"5px 8px", fontWeight:500, color:"#111", maxWidth:110, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>🖥 {p.atm}</td>
+                            <td style={{ padding:"5px 8px", color:"#374151" }}>{p.empresa}</td>
+                            <td style={{ padding:"5px 8px" }}>
+                              <span style={{ fontSize:9, padding:"1px 6px", borderRadius:20, background:"#eff6ff", color:"#1d4ed8", whiteSpace:"nowrap" }}>{p.acceso}</span>
                             </td>
-                            <td style={{ padding:"7px 10px", color:"#374151" }}>{p.persona}</td>
-                            <td style={{ padding:"7px 10px", color:"#6b7280" }}>{p.fecha}</td>
-                            <td style={{ padding:"7px 10px", color:"#6b7280" }}>{p.hora}</td>
-                            <td style={{ padding:"7px 10px" }}>
+                            <td style={{ padding:"5px 8px", color:"#374151", maxWidth:110, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{p.persona}</td>
+                            <td style={{ padding:"5px 8px", color:"#6b7280" }}>{p.fecha}</td>
+                            <td style={{ padding:"5px 8px", color:"#6b7280" }}>{p.hora}</td>
+                            <td style={{ padding:"5px 8px" }}>
                               {p.enviado
-                                ? <span style={{ fontSize:10, padding:"2px 7px", borderRadius:20, background:"#f0fdf4", color:"#15803d" }}>✓ enviado</span>
-                                : <span style={{ fontSize:10, padding:"2px 7px", borderRadius:20, background:"#f9fafb", color:"#9ca3af", border:"1px solid #e5e7eb" }}>guardado</span>}
+                                ? <span style={{ fontSize:9, padding:"1px 6px", borderRadius:20, background:"#f0fdf4", color:"#15803d" }}>✓ enviado</span>
+                                : <span style={{ fontSize:9, padding:"1px 6px", borderRadius:20, background:"#f9fafb", color:"#9ca3af", border:"1px solid #e5e7eb" }}>guardado</span>}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                    {permisos.length > 8 && (
-                      <div style={{ textAlign:"center", marginTop:10 }}>
-                        <button onClick={() => setTab("history")}
-                          style={{ fontSize:12, color:"#2563eb", background:"none", border:"none", cursor:"pointer", textDecoration:"underline" }}>
-                          Ver todos los registros ({permisos.length}) →
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </>
               )}
@@ -382,7 +368,7 @@ export default function App() {
         </>
       )}
 
-      {/* ══════════════════ FORMULARIO ══════════════════ */}
+      {/* ══════════════ FORMULARIO ══════════════ */}
       {tab === "form" && (
         <>
           <div style={s.emailBox}>
@@ -439,23 +425,23 @@ export default function App() {
         </>
       )}
 
-      {/* ══════════════════ HISTORIAL ══════════════════ */}
+      {/* ══════════════ HISTORIAL ══════════════ */}
       {tab === "history" && (
         <>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
             <span style={{ fontWeight:500, fontSize:15 }}>Historial de permisos</span>
-            {permisos.length > 0 && (
+            {permisos.length>0 && (
               <button onClick={() => { if(window.confirm("¿Eliminar todo el historial?")) save([]); }}
                 style={{ padding:"5px 10px", background:"transparent", border:"1px solid #d1d5db", borderRadius:6, fontSize:12, cursor:"pointer", color:"#6b7280" }}>
                 🗑 Limpiar todo
               </button>
             )}
           </div>
-          {permisos.length > 1 && (
+          {permisos.length>1 && (
             <input placeholder="Buscar por ATM, empresa o persona..." value={search}
               onChange={e => setSearch(e.target.value)} style={{ ...s.input, marginBottom:12 }} />
           )}
-          {filtered.length === 0 ? (
+          {filtered.length===0 ? (
             <div style={{ textAlign:"center", padding:"2.5rem", color:"#9ca3af" }}>
               <div style={{ fontSize:40, marginBottom:10 }}>📋</div>
               <p>{permisos.length===0 ? "Aún no hay permisos registrados." : "Sin resultados."}</p>
