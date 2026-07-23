@@ -10,7 +10,8 @@ const ACCESOS = [
   "Dispensador estado fatal", "Lectora estado Fatal", "Cambio de componentes",
 ];
 
-const EMPTY  = { atm:"", empresa:"", acceso:"", fecha:"", hora:"", motivo:"", persona:"" };
+const today  = new Date().toISOString().split("T")[0];
+const EMPTY  = { atm:"", empresa:"", acceso:"", fecha: today, hora:"", motivo:"", persona:"" };
 const COLORS = ["#2563eb","#16a34a","#d97706","#dc2626","#7c3aed","#0891b2","#be185d","#65a30d","#ea580c","#0284c7","#9333ea"];
 
 export default function App() {
@@ -370,61 +371,121 @@ export default function App() {
 
       {/* ══════════════ FORMULARIO ══════════════ */}
       {tab === "form" && (
-        <>
-          <div style={s.emailBox}>
-            <span style={{ fontSize:22 }}>✉</span>
-            <div style={{ flex:1 }}>
-              <label style={{ fontSize:11, fontWeight:500, color:"#1d4ed8", display:"block", marginBottom:4 }}>CORREOS DE DESTINO</label>
-              <input type="text" value={email} placeholder="correo1@empresa.com, correo2@empresa.com"
-                onChange={e => { setEmail(e.target.value); localStorage.setItem("atm-email", e.target.value); }}
-                style={{ ...s.input, border:"1px solid #93c5fd", fontSize:13 }} />
-              <span style={{ fontSize:11, color:"#93c5fd", marginTop:4, display:"block" }}>Separa las direcciones con coma ( , )</span>
-            </div>
-          </div>
-          <div style={s.card}>
-            <div style={s.grid2}>
-              <div style={{ display:"flex", flexDirection:"column" }}>
-                <label style={s.label}>Nombre del ATM</label>
-                <input name="atm" value={form.atm} onChange={handleChange} placeholder="ATM-001 Centro Cívico" style={s.input} />
-              </div>
-              <div style={{ display:"flex", flexDirection:"column" }}>
-                <label style={s.label}>Empresa</label>
-                <input name="empresa" value={form.empresa} onChange={handleChange} placeholder="Nombre de la empresa" style={s.input} />
-              </div>
-              <div style={{ display:"flex", flexDirection:"column", gridColumn:"1 / -1" }}>
-                <label style={s.label}>Solicitar acceso</label>
-                <select name="acceso" value={form.acceso} onChange={handleChange} style={s.select}>
-                  <option value="">Selecciona el tipo de acceso...</option>
-                  {ACCESOS.map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
-              </div>
-              <div style={{ display:"flex", flexDirection:"column" }}>
-                <label style={s.label}>Fecha de ingreso</label>
-                <input type="date" name="fecha" value={form.fecha} onChange={handleChange} style={s.input} />
-              </div>
-              <div style={{ display:"flex", flexDirection:"column" }}>
-                <label style={s.label}>Hora de ingreso</label>
-                <input type="time" name="hora" value={form.hora} onChange={handleChange} style={s.input} />
-              </div>
-              <div style={{ display:"flex", flexDirection:"column", gridColumn:"1 / -1" }}>
-                <label style={s.label}>Persona que ingresa</label>
-                <input name="persona" value={form.persona} onChange={handleChange} placeholder="Nombre completo del técnico / responsable" style={s.input} />
-              </div>
-              <div style={{ display:"flex", flexDirection:"column", gridColumn:"1 / -1" }}>
-                <label style={s.label}>Motivo</label>
-                <textarea name="motivo" value={form.motivo} onChange={handleChange} placeholder="Describe el motivo del acceso al ATM..." style={s.textarea} />
-              </div>
-            </div>
-            <div style={s.btnRow}>
-              <button onClick={handleSaveOnly} style={s.btnSave} disabled={sending}>💾 Solo guardar</button>
-              <button onClick={handleSendEmail} style={s.btnSend(sending)} disabled={sending}>
-                {sending ? "Enviando..." : "✉ Guardar y enviar correo"}
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+  <>
+    <div style={s.emailBox}>
+      <span style={{ fontSize:22 }}>✉</span>
+      <div style={{ flex:1 }}>
+        <label style={{ fontSize:11, fontWeight:500, color:"#1d4ed8", display:"block", marginBottom:4 }}>CORREOS DE DESTINO</label>
+        <input type="text" value={email} placeholder="correo1@empresa.com, correo2@empresa.com"
+          onChange={e => { setEmail(e.target.value); localStorage.setItem("atm-email", e.target.value); }}
+          style={{ ...s.input, border:"1px solid #93c5fd", fontSize:13 }} />
+        <span style={{ fontSize:11, color:"#93c5fd", marginTop:4, display:"block" }}>Separa las direcciones con coma ( , )</span>
+      </div>
+    </div>
 
+    <div style={s.card}>
+      <div style={s.grid2}>
+
+        {/* Nombre del ATM — solo número */}
+        <div style={{ display:"flex", flexDirection:"column" }}>
+  <label style={s.label}>Número del ATM</label>
+  <div style={{ display:"flex", alignItems:"center", border:"1px solid #d1d5db", borderRadius:6, overflow:"hidden", background:"#fff" }}>
+    <span style={{ padding:"9px 10px", background:"#f3f4f6", color:"#6b7280", fontSize:13, borderRight:"1px solid #d1d5db", whiteSpace:"nowrap" }}>
+      ATM —
+    </span>
+    <input
+      name="atm"
+      value={form.atm}
+      onChange={e => setForm(prev => ({ ...prev, atm: e.target.value }))}
+      placeholder="165"
+      style={{ ...s.input, border:"none", borderRadius:0, outline:"none", boxShadow:"none" }}
+    />
+  </div>
+</div>
+
+        {/* Empresa — dropdown fijo */}
+        <div style={{ display:"flex", flexDirection:"column" }}>
+          <label style={s.label}>Empresa</label>
+          <select name="empresa" value={form.empresa} onChange={handleChange} style={s.select}>
+            <option value="">Selecciona la empresa...</option>
+            <option value="Diebold">Diebold</option>
+            <option value="Diebold - Tevcol">Diebold - Tevcol</option>
+            <option value="Diebold - Tevcol - Tcs - Segudatos">Diebold - Tevcol - Tcs - Segudatos</option>
+          </select>
+        </div>
+
+        {/* Solicitar acceso — dropdown fijo */}
+        <div style={{ display:"flex", flexDirection:"column", gridColumn:"1 / -1" }}>
+          <label style={s.label}>Solicitar acceso</label>
+          <select name="acceso" value={form.acceso} onChange={handleChange} style={s.select}>
+            <option value="">Selecciona el tipo de acceso...</option>
+            <option value="CCTV">CCTV</option>
+            <option value="CCTV - Favorita">CCTV - Favorita</option>
+          </select>
+        </div>
+
+        {/* Fecha — por default hoy */}
+        <div style={{ display:"flex", flexDirection:"column" }}>
+          <label style={s.label}>Fecha de ingreso</label>
+          <input
+            type="date"
+            name="fecha"
+            value={form.fecha}
+            onChange={handleChange}
+            style={s.input}
+          />
+        </div>
+
+        {/* Hora — en blanco */}
+        <div style={{ display:"flex", flexDirection:"column" }}>
+          <label style={s.label}>Hora de ingreso</label>
+          <input
+            type="time"
+            name="hora"
+            value={form.hora}
+            onChange={handleChange}
+            placeholder="--:--"
+            style={s.input}
+          />
+        </div>
+
+        {/* Persona — en blanco */}
+        <div style={{ display:"flex", flexDirection:"column", gridColumn:"1 / -1" }}>
+          <label style={s.label}>Persona que ingresa</label>
+          <input
+            name="persona"
+            value={form.persona}
+            onChange={handleChange}
+            placeholder="Nombre completo del técnico / responsable"
+            style={s.input}
+          />
+        </div>
+
+        {/* Motivo — en blanco */}
+        <div style={{ display:"flex", flexDirection:"column", gridColumn:"1 / -1" }}>
+  <label style={s.label}>Motivo</label>
+  <select name="motivo" value={form.motivo} onChange={handleChange} style={s.select}>
+    <option value="">Selecciona el motivo...</option>
+    <option value="Abastecimiento">Abastecimiento</option>
+    <option value="Dispensador estado Fatal">Dispensador estado Fatal</option>
+    <option value="Lectora estado Fatal">Lectora estado Fatal</option>
+    <option value="Teclado estado Fatal">Teclado estado Fatal</option>
+    <option value="Impresora estado Fatal">Impresora estado Fatal</option>
+    <option value="Mantenimiento Preventivo">Mantenimiento Preventivo</option>
+  </select>
+</div> q
+
+      </div>
+
+      <div style={s.btnRow}>
+        <button onClick={handleSaveOnly} style={s.btnSave} disabled={sending}>💾 Solo guardar</button>
+        <button onClick={handleSendEmail} style={s.btnSend(sending)} disabled={sending}>
+          {sending ? "Enviando..." : "✉ Guardar y enviar correo"}
+        </button>
+      </div>
+    </div>
+  </>
+)}
       {/* ══════════════ HISTORIAL ══════════════ */}
       {tab === "history" && (
         <>
